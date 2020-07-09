@@ -68,7 +68,6 @@ def pre_processing(img):
     original_img = np.copy(img)
     img = rgb2gray(img)
     # img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-   
     # Run 3x3 Canny Filter on image to get gradient
     # grad = canny_filter(img,sigma=0.33)
     dimensions = img.shape
@@ -81,14 +80,10 @@ def pre_processing(img):
     img[img <= th] = 0
     img[img > th] = 1
     img = 1 - img
-    cv2.imshow('Mask', img)
-    cv2.waitKey(0)
 
     mask = img
     seed = binary_erosion(img, rectangle(1, int(.015 * width)))  # 1,4 for fda, 1,30 for UDI
     recon = reconstruction(seed, mask, 'dilation')
-    cv2.imshow('Output', recon)
-    cv2.waitKey(0)
 
     return original_img, recon
 
@@ -158,8 +153,6 @@ def watershed_segmentation(original_img, processed_img):
 
    # Get complement of watershed image
    watershed_complement = cv2.bitwise_not(grad_watershed_to_show)
-   cv2.imshow('Watershed Complement', watershed_complement)
-   cv2.waitKey(0)
    return original_img, watershed_complement, labels, stats, numLabels
 
 
@@ -192,8 +185,6 @@ def filtering(original_img, segmented_img,labels,stats,numLabels):
     print('[INFO]: Total number of connected components: ' + str(numLabels))
     print('[INFO]: Total number of images classified by size: ' + str(filtered_images))
     print('[INFO]: Total number of texts classified by size: ' + str(numLabels - filtered_images))
-    cv2.imshow("Bounding boxes on original image by size & aspect ratio", labeled_img)
-    cv2.waitKey(0)
     # Returns original image, labeled image with bounding boxes, & array of matrices of bounding boxes
     return original_img, labeled_img, returned_bounding_boxes
 
@@ -202,10 +193,6 @@ def filtering(original_img, segmented_img,labels,stats,numLabels):
 
 
 #Run Localization
-
-original, pre_processed = pre_processing('Sample Labels/journal.pone.0165002.g003.png')
-original, segmented, label, statistics, numLabel = watershed_segmentation(original, pre_processed)
-original_img, labeled_img, bounding_box_array = filtering(original, segmented, label, statistics, numLabel)
 
 #all_images_tester('Sample Labels')
 

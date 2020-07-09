@@ -1,20 +1,24 @@
 from tensorflow.keras.models import load_model
+from Localization import pre_processing, filtering, watershed_segmentation
 import argparse
 import pickle
 import cv2
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--image', type=str, default=None,
-    help="Path of the image we want to classify")
+#parser.add_argument('--image', type=str, default=None,
+#    help="Path of the image we want to classify")
 parser.add_argument("--model", type=int, default=-1,
 	help="Type of model")
 
 args = vars(parser.parse_args())
 
 # load the input image and resize it to the target spatial dimensions
-image = cv2.imread(args['image'])
-output = image.copy()
-image = cv2.resize(image, (32, 32))
+#image = cv2.imread(args['image'])
+#output = image.copy()
+#image = cv2.resize(image, (32, 32))
+original, pre_processed = pre_processing('Sample Labels/journal.pone.0165002.g003.png')
+original, segmented, label, statistics, numLabel = watershed_segmentation(original, pre_processed)
+original_img, labeled_img, bounding_box_array = filtering(original, segmented, label, statistics, numLabel)
 # scale the pixel values to [0, 1]
 image = image.astype("float") / 255.0
 
